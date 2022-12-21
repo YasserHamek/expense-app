@@ -3,11 +3,12 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
   Param,
   Post,
   Put,
 } from '@nestjs/common';
-import { data, Report, ReportType } from './Data';
+import { Data, data, Report, ReportType } from './Data';
 import { v4 as uuidGenerator } from 'uuid';
 
 @Controller('report/:type')
@@ -48,28 +49,22 @@ export class AppController {
     return createdReport;
   }
 
-  @Post(':id')
-  createReportById() {
-    return 'null';
-  }
-
-  @Put()
-  updateReport() {
-    return 'null';
-  }
-
   @Put(':id')
-  updateReportById() {
-    return 'null';
+  updateReportById(
+    @Param('id') id: string,
+    @Body() body: { source: string; amount: number },
+  ): void {
+    data.report.forEach((report) => {
+      if (report.id === id) {
+        report.amount = body.amount;
+        report.source = body.source;
+      }
+    });
   }
 
+  @HttpCode(202)
   @Delete(':id')
-  deleteReportById(): void {
-    const constt = null;
-  }
-
-  @Delete()
-  deleteReport(): void {
-    const constt = null;
+  deleteReportById(@Param('id') id: string): void {
+    data.report = data.report.filter((report) => report.id != id);
   }
 }
