@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { data, Report, ReportType } from './Data';
 import { v4 as uuidGenerator } from 'uuid';
+import { CreateReportDtos, UpdateReportDtos } from './dtos/report.dtos';
 
 @Injectable()
 export class AppService {
@@ -16,10 +17,7 @@ export class AppService {
       .find((report) => report.id === id);
   }
 
-  createReport(
-    type: ReportType,
-    { source, amount }: { source: string; amount: number },
-  ): Report {
+  createReport(type: ReportType, { source, amount }: CreateReportDtos): Report {
     const createdReport: Report = {
       id: uuidGenerator(),
       source: source,
@@ -34,7 +32,7 @@ export class AppService {
     return createdReport;
   }
 
-  updateReportById(id: string, body: { source: string; amount: number }): void {
+  updateReportById(id: string, body: UpdateReportDtos): void {
     data.report.forEach((report) => {
       if (report.id === id) {
         report.amount = body.amount;
