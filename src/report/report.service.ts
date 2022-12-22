@@ -5,7 +5,7 @@ import {
   ResponseReportDto,
   CreateReportDto,
   UpdateReportDto,
-} from 'src/report/dtos/report.dtos';
+} from 'src/report/report.dtos';
 
 @Injectable()
 export class ReportService {

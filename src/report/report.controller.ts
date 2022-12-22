@@ -13,7 +13,7 @@ import {
   CreateReportDto,
   ResponseReportDto,
   UpdateReportDto,
-} from 'src/report/dtos/report.dtos';
+} from 'src/report/report.dtos';
 import { ReportService } from './report.service';
 import { ReportType } from 'src/Data';
 @Controller('report/:type')

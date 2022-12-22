@@ -3,9 +3,10 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ReportModule } from './report/report.module';
+import { SummuryModule } from './summury/summury.module';
 
 @Module({
-  imports: [ReportModule],
+  imports: [ReportModule, SummuryModule],
   controllers: [AppController],
   providers: [
     AppService,
