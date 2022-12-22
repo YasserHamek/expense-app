@@ -2,6 +2,7 @@ import { ClassSerializerInterceptor, Module } from '@nestjs/common';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { ConstumInterceptor } from './interceptor/costum.interceptor';
 
 @Module({
   imports: [],
@@ -10,7 +11,7 @@ import { AppService } from './app.service';
     AppService,
     {
       provide: APP_INTERCEPTOR,
-      useClass: ClassSerializerInterceptor,
+      useClass: ConstumInterceptor,
     },
   ],
 })
