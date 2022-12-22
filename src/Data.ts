@@ -1,5 +1,3 @@
-import { ResponseReportDto } from './dtos/report.dtos';
-
 export interface Data {
   report: Report[];
 }
