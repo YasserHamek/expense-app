@@ -1,23 +1,35 @@
 import { Injectable } from '@nestjs/common';
 import { data, Report, ReportType } from './Data';
 import { v4 as uuidGenerator } from 'uuid';
-import { CreateReportDtos, UpdateReportDtos } from './dtos/report.dtos';
+import {
+  CreateReportDto,
+  ResponseReportDto,
+  UpdateReportDto,
+} from './dtos/report.dtos';
+import { map } from 'rxjs';
 
 @Injectable()
 export class AppService {
-  getAllReport(type: ReportType): Report[] {
-    return data.report.filter(
-      (report) => report.reportType === ReportType[type.toUpperCase()],
+  getAllReport(type: ReportType): ResponseReportDto[] {
+    return data.report
+      .filter((report) => report.reportType === ReportType[type.toUpperCase()])
+      .map((report) => new ResponseReportDto(report));
+  }
+
+  getReportById(type: ReportType, id: string): ResponseReportDto {
+    return new ResponseReportDto(
+      data.report
+        .filter(
+          (report) => report.reportType === ReportType[type.toUpperCase()],
+        )
+        .find((report) => report.id === id),
     );
   }
 
-  getReportById(type: ReportType, id: string): Report {
-    return data.report
-      .filter((report) => report.reportType === ReportType[type.toUpperCase()])
-      .find((report) => report.id === id);
-  }
-
-  createReport(type: ReportType, { source, amount }: CreateReportDtos): Report {
+  createReport(
+    type: ReportType,
+    { source, amount }: CreateReportDto,
+  ): ResponseReportDto {
     const createdReport: Report = {
       id: uuidGenerator(),
       source: source,
@@ -29,10 +41,10 @@ export class AppService {
 
     data.report.push(createdReport);
 
-    return createdReport;
+    return new ResponseReportDto(createdReport);
   }
 
-  updateReportById(id: string, body: UpdateReportDtos): void {
+  updateReportById(id: string, body: UpdateReportDto): void {
     data.report.forEach((report) => {
       if (report.id === id) {
         report.amount = body.amount;
