@@ -12,10 +12,13 @@ import { Report, ReportType } from '@prisma/client';
 export class ReportService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  getAllReport(type: ReportType): ResponseReportDto[] {
-    return data.report
-      .filter((report) => report.reportType === ReportType[type.toUpperCase()])
-      .map((report) => new ResponseReportDto(report));
+  async getAllReport(type: ReportType): Promise<ResponseReportDto[]> {
+    const reports: Report[] = await this.prismaService.report.findMany({
+      where: {
+        reportType: type,
+      },
+    });
+    return reports.map((report) => new ResponseReportDto(report));
   }
 
   getReportById(type: ReportType, id: string): ResponseReportDto {

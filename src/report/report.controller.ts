@@ -24,7 +24,7 @@ export class ReportController {
   @Get()
   getAllReport(
     @Param('type', new ParseEnumPipe(ReportType)) type: ReportType,
-  ): ResponseReportDto[] {
+  ): Promise<ResponseReportDto[]> {
     return this.reportService.getAllReport(type);
   }
 

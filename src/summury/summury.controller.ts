@@ -7,7 +7,7 @@ export class SummuryController {
   constructor(private readonly summuryService: SummuryService) {}
 
   @Get()
-  getSummury(): SummuryDto {
+  getSummury(): Promise<SummuryDto> {
     return this.summuryService.getSummury();
   }
 }
