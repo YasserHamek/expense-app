@@ -30,10 +30,9 @@ export class ReportController {
 
   @Get(':id')
   getReportById(
-    @Param('type', new ParseEnumPipe(ReportType)) type: ReportType,
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<ResponseReportDto> {
-    return this.reportService.getReportById(type, id);
+    return this.reportService.getReportById(id);
   }
 
   @Post()
@@ -44,18 +43,19 @@ export class ReportController {
     return this.reportService.createReport(type, { source, amount });
   }
 
-  @HttpCode(204)
   @Put(':id')
   updateReportById(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() { source, amount }: UpdateReportDto,
-  ): void {
-    this.reportService.updateReportById(id, { source, amount });
+  ): Promise<ResponseReportDto> {
+    return this.reportService.updateReportById(id, { source, amount });
   }
 
   @HttpCode(202)
   @Delete(':id')
-  deleteReportById(@Param('id', ParseUUIDPipe) id: string): void {
-    this.reportService.deleteReportById(id);
+  deleteReportById(
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<ResponseReportDto> {
+    return this.reportService.deleteReportById(id);
   }
 }

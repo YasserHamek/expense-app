@@ -22,10 +22,7 @@ export class ReportService {
     return reports.map((report) => new ResponseReportDto(report));
   }
 
-  async getReportById(
-    type: ReportType,
-    id: string,
-  ): Promise<ResponseReportDto> {
+  async getReportById(id: string): Promise<ResponseReportDto> {
     const searchedReport: Report = await this.prismaService.report
       .findUniqueOrThrow({
         where: {
@@ -40,7 +37,7 @@ export class ReportService {
           );
         }
         throw new HttpException(
-          'internal service error',
+          'internal server error',
           HttpStatus.INTERNAL_SERVER_ERROR,
         );
       });
@@ -63,16 +60,53 @@ export class ReportService {
     return new ResponseReportDto(createdReport);
   }
 
-  updateReportById(id: string, body: UpdateReportDto): void {
-    data.report.forEach((report) => {
-      if (report.id === id) {
-        report.amount = body.amount;
-        report.source = body.source;
-      }
-    });
+  async updateReportById(
+    id: string,
+    updateReportDto: UpdateReportDto,
+  ): Promise<ResponseReportDto> {
+    const updatedReport: Report = await this.prismaService.report
+      .update({
+        where: {
+          id: id,
+        },
+        data: updateReportDto,
+      })
+      .catch((notFoundError: PrismaClientKnownRequestError) => {
+        if (notFoundError.code === 'P2025') {
+          throw new HttpException(
+            'Report with id : ' + id + ' not found',
+            HttpStatus.NOT_FOUND,
+          );
+        }
+        throw new HttpException(
+          'internal server error',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      });
+
+    return new ResponseReportDto(updatedReport);
   }
 
-  deleteReportById(id: string): void {
-    data.report = data.report.filter((report) => report.id != id);
+  async deleteReportById(id: string): Promise<ResponseReportDto> {
+    const deletedReport: Report = await this.prismaService.report
+      .delete({
+        where: {
+          id: id,
+        },
+      })
+      .catch((notFoundError: PrismaClientKnownRequestError) => {
+        if (notFoundError.code === 'P2025') {
+          throw new HttpException(
+            'Report with id : ' + id + ' not found',
+            HttpStatus.NOT_FOUND,
+          );
+        }
+        throw new HttpException(
+          'internal server error',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      });
+
+    return new ResponseReportDto(deletedReport);
   }
 }
