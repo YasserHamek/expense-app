@@ -1,7 +1,11 @@
 import { IsNotEmpty, IsString, IsPositive, IsNumber } from 'class-validator';
 import { PartialType } from '@nestjs/mapped-types';
-import { Report, ReportType } from 'src/Data';
 import { Expose, Exclude } from 'class-transformer';
+import { Report, ReportType } from '@prisma/client';
+
+export interface Data {
+  report: Report[];
+}
 
 export class CreateReportDto {
   @IsString()

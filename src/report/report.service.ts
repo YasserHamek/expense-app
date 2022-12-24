@@ -1,14 +1,17 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { ReportType, data, Report } from 'src/Data';
-import { v4 as uuidGenerator } from 'uuid';
+import { data } from 'src/Data';
 import {
   ResponseReportDto,
   CreateReportDto,
   UpdateReportDto,
-} from 'src/report/report.dtos';
+} from 'src/report/report.dto';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { Report, ReportType } from '@prisma/client';
 
 @Injectable()
 export class ReportService {
+  constructor(private readonly prismaService: PrismaService) {}
+
   getAllReport(type: ReportType): ResponseReportDto[] {
     return data.report
       .filter((report) => report.reportType === ReportType[type.toUpperCase()])
@@ -27,20 +30,17 @@ export class ReportService {
     return new ResponseReportDto(report);
   }
 
-  createReport(
+  async createReport(
     type: ReportType,
-    { source, amount }: CreateReportDto,
-  ): ResponseReportDto {
-    const createdReport: Report = {
-      id: uuidGenerator(),
-      source: source,
-      amount: amount,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      reportType: ReportType[type.toUpperCase()],
-    };
-
-    data.report.push(createdReport);
+    createReportDto: CreateReportDto,
+  ): Promise<ResponseReportDto> {
+    const createdReport: Report = await this.prismaService.report.create({
+      data: {
+        source: createReportDto.source,
+        amount: createReportDto.amount,
+        reportType: type,
+      },
+    });
 
     return new ResponseReportDto(createdReport);
   }

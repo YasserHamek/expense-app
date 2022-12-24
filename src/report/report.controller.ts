@@ -9,13 +9,14 @@ import {
   Put,
 } from '@nestjs/common';
 import { ParseEnumPipe, ParseUUIDPipe } from '@nestjs/common/pipes';
+import { ReportType } from '@prisma/client';
 import {
   CreateReportDto,
   ResponseReportDto,
   UpdateReportDto,
-} from 'src/report/report.dtos';
+} from 'src/report/report.dto';
 import { ReportService } from './report.service';
-import { ReportType } from 'src/Data';
+
 @Controller('report/:type')
 export class ReportController {
   constructor(private readonly reportService: ReportService) {}
@@ -39,7 +40,7 @@ export class ReportController {
   createReport(
     @Param('type', new ParseEnumPipe(ReportType)) type: ReportType,
     @Body() { source, amount }: CreateReportDto,
-  ): ResponseReportDto {
+  ): Promise<ResponseReportDto> {
     return this.reportService.createReport(type, { source, amount });
   }
 

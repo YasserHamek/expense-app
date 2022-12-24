@@ -4,9 +4,10 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ReportModule } from './report/report.module';
 import { SummuryModule } from './summury/summury.module';
+import { PrismaModule } from './prisma/prisma.module';
 
 @Module({
-  imports: [ReportModule, SummuryModule],
+  imports: [ReportModule, SummuryModule, PrismaModule],
   controllers: [AppController],
   providers: [
     AppService,

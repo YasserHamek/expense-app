@@ -10,7 +10,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model report {
+model Report {
   id            String @id @default(uuid())
   source        String
   amount        Int
