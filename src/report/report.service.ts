@@ -7,6 +7,7 @@ import {
 } from 'src/report/report.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Report, ReportType } from '@prisma/client';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 
 @Injectable()
 export class ReportService {
@@ -21,16 +22,30 @@ export class ReportService {
     return reports.map((report) => new ResponseReportDto(report));
   }
 
-  getReportById(type: ReportType, id: string): ResponseReportDto {
-    const report: Report = data.report
-      .filter((report) => report.reportType === ReportType[type.toUpperCase()])
-      .find((report) => report.id === id);
+  async getReportById(
+    type: ReportType,
+    id: string,
+  ): Promise<ResponseReportDto> {
+    const searchedReport: Report = await this.prismaService.report
+      .findUniqueOrThrow({
+        where: {
+          id: id,
+        },
+      })
+      .catch((notFoundError: PrismaClientKnownRequestError) => {
+        if (notFoundError.code === 'P2025') {
+          throw new HttpException(
+            'Report with id : ' + id + ' not found',
+            HttpStatus.NOT_FOUND,
+          );
+        }
+        throw new HttpException(
+          'internal service error',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      });
 
-    if (!report) {
-      throw new HttpException('report not found', HttpStatus.NOT_FOUND);
-    }
-
-    return new ResponseReportDto(report);
+    return new ResponseReportDto(searchedReport);
   }
 
   async createReport(

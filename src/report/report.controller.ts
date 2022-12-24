@@ -32,7 +32,7 @@ export class ReportController {
   getReportById(
     @Param('type', new ParseEnumPipe(ReportType)) type: ReportType,
     @Param('id', ParseUUIDPipe) id: string,
-  ): ResponseReportDto {
+  ): Promise<ResponseReportDto> {
     return this.reportService.getReportById(type, id);
   }
 
