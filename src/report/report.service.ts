@@ -1,13 +1,8 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { data } from 'src/Data';
-import {
-  ResponseReportDto,
-  CreateReportDto,
-  UpdateReportDto,
-} from 'src/report/report.dto';
-import { PrismaService } from 'src/prisma/prisma.service';
-import { Report, ReportType } from '@prisma/client';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { ResponseReportDto, CreateReportDto, UpdateReportDto } from "src/report/report.dto";
+import { PrismaService } from "src/prisma/prisma.service";
+import { Report, ReportType } from "@prisma/client";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime";
 
 @Injectable()
 export class ReportService {
@@ -19,7 +14,7 @@ export class ReportService {
         reportType: type,
       },
     });
-    return reports.map((report) => new ResponseReportDto(report));
+    return reports.map(report => new ResponseReportDto(report));
   }
 
   async getReportById(id: string): Promise<ResponseReportDto> {
@@ -30,25 +25,16 @@ export class ReportService {
         },
       })
       .catch((notFoundError: PrismaClientKnownRequestError) => {
-        if (notFoundError.code === 'P2025') {
-          throw new HttpException(
-            'Report with id : ' + id + ' not found',
-            HttpStatus.NOT_FOUND,
-          );
+        if (notFoundError.code === "P2025") {
+          throw new HttpException("Report with id : " + id + " not found", HttpStatus.NOT_FOUND);
         }
-        throw new HttpException(
-          'internal server error',
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
+        throw new HttpException("internal server error", HttpStatus.INTERNAL_SERVER_ERROR);
       });
 
     return new ResponseReportDto(searchedReport);
   }
 
-  async createReport(
-    type: ReportType,
-    createReportDto: CreateReportDto,
-  ): Promise<ResponseReportDto> {
+  async createReport(type: ReportType, createReportDto: CreateReportDto): Promise<ResponseReportDto> {
     const createdReport: Report = await this.prismaService.report.create({
       data: {
         source: createReportDto.source,
@@ -60,10 +46,7 @@ export class ReportService {
     return new ResponseReportDto(createdReport);
   }
 
-  async updateReportById(
-    id: string,
-    updateReportDto: UpdateReportDto,
-  ): Promise<ResponseReportDto> {
+  async updateReportById(id: string, updateReportDto: UpdateReportDto): Promise<ResponseReportDto> {
     const updatedReport: Report = await this.prismaService.report
       .update({
         where: {
@@ -72,16 +55,10 @@ export class ReportService {
         data: updateReportDto,
       })
       .catch((notFoundError: PrismaClientKnownRequestError) => {
-        if (notFoundError.code === 'P2025') {
-          throw new HttpException(
-            'Report with id : ' + id + ' not found',
-            HttpStatus.NOT_FOUND,
-          );
+        if (notFoundError.code === "P2025") {
+          throw new HttpException("Report with id : " + id + " not found", HttpStatus.NOT_FOUND);
         }
-        throw new HttpException(
-          'internal server error',
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
+        throw new HttpException("internal server error", HttpStatus.INTERNAL_SERVER_ERROR);
       });
 
     return new ResponseReportDto(updatedReport);
@@ -95,16 +72,10 @@ export class ReportService {
         },
       })
       .catch((notFoundError: PrismaClientKnownRequestError) => {
-        if (notFoundError.code === 'P2025') {
-          throw new HttpException(
-            'Report with id : ' + id + ' not found',
-            HttpStatus.NOT_FOUND,
-          );
+        if (notFoundError.code === "P2025") {
+          throw new HttpException("Report with id : " + id + " not found", HttpStatus.NOT_FOUND);
         }
-        throw new HttpException(
-          'internal server error',
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
+        throw new HttpException("internal server error", HttpStatus.INTERNAL_SERVER_ERROR);
       });
 
     return new ResponseReportDto(deletedReport);

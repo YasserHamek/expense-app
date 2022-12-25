@@ -1,7 +1,7 @@
-import { IsNotEmpty, IsString, IsPositive, IsNumber } from 'class-validator';
-import { PartialType } from '@nestjs/mapped-types';
-import { Expose, Exclude } from 'class-transformer';
-import { Report, ReportType } from '@prisma/client';
+import { IsNotEmpty, IsString, IsPositive, IsNumber } from "class-validator";
+import { PartialType } from "@nestjs/mapped-types";
+import { Expose, Exclude } from "class-transformer";
+import { Report, ReportType } from "@prisma/client";
 
 export interface Data {
   report: Report[];
@@ -34,7 +34,7 @@ export class ResponseReportDto {
   @Exclude()
   updatedAt: Date;
 
-  @Expose({ name: 'updatedAtTransformed' })
+  @Expose({ name: "updatedAtTransformed" })
   transformCreatedAt() {
     return this.createdAt;
   }
