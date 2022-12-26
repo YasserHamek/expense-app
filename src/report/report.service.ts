@@ -14,7 +14,8 @@ export class ReportService {
         reportType: type,
       },
     });
-    return reports.map(report => new ResponseReportDto(report));
+    const reportss = reports.map(report => new ResponseReportDto(report));
+    return reportss;
   }
 
   async getReportById(id: string): Promise<ResponseReportDto> {
