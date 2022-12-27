@@ -1,3 +1,4 @@
+import { HttpException } from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";
 import { ReportType } from "@prisma/client";
 import { PrismaService } from "src/prisma/prisma.service";
@@ -49,9 +50,37 @@ describe("ReportService", () => {
       await expect(mockPrismaFindMany).toBeCalledWith(prismaServiceFindMany_incomeFilter);
     });
   });
+
+  describe("getReportById test", () => {
+    it("it should return the id report ", async () => {
+      prismaService.report.findUniqueOrThrow = jest.fn().mockReturnValue(serviceGetReportById_returnedValue);
+
+      expect(await service.getReportById(prismaServiceFindUniqueOrThrow_Filter.where.id)).toEqual(
+        serviceGetReportById_returnedValue,
+      );
+    });
+
+    it("it should throw HttpException when no report was found ", async () => {
+      jest.spyOn(prismaService.report, "findFirstOrThrow").mockReturnValue(undefined);
+
+      await expect(service.getReportById("9f7118ae-9c00-4dc1-8b76-7cc28f09ab96")).rejects.toThrowError(HttpException);
+    });
+
+    it("prismaService should be called bu the right params ", async () => {
+      const prismaFindUniqueOrThrowMock = jest
+        .spyOn(prismaService.report, "findFirstOrThrow")
+        .mockImplementation(jest.fn().mockReturnValue(serviceGetReportById_returnedValue));
+
+      await service.getReportById(prismaServiceFindUniqueOrThrow_Filter.where.id);
+
+      await expect(prismaFindUniqueOrThrowMock).toBeCalledWith(prismaServiceFindUniqueOrThrow_Filter);
+    });
+  });
 });
 
 //Testing Data
+
+//getALLReport Testing Data
 const prismaFindMany_expenseFilter_returnedValue = [
   {
     id: "9b2b4aba-ca74-4427-8ea2-cb4466723009",
@@ -154,4 +183,20 @@ const prismaServiceFindMany_expenseFilter = {
   where: {
     reportType: ReportType.expense,
   },
+};
+
+//getReportById testing data
+const prismaServiceFindUniqueOrThrow_Filter = {
+  where: {
+    id: "5272eeb5-3ab2-406a-aacc-ee25ef6c08ee",
+  },
+};
+
+const serviceGetReportById_returnedValue = {
+  id: "5272eeb5-3ab2-406a-aacc-ee25ef6c08ee",
+  source: "Youtube",
+  amount: 1000,
+  createdAt: "2022-12-26T18:55:29.731Z",
+  updatedAt: "2022-12-26T18:53:50.903Z",
+  reportType: "income",
 };

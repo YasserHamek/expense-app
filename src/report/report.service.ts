@@ -31,7 +31,6 @@ export class ReportService {
         }
         throw new HttpException("internal server error", HttpStatus.INTERNAL_SERVER_ERROR);
       });
-
     return new ResponseReportDto(searchedReport);
   }
 
