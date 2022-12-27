@@ -1,4 +1,4 @@
-import { HttpException } from "@nestjs/common";
+import { HttpException, HttpStatus } from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";
 import { ReportType } from "@prisma/client";
 import { PrismaService } from "src/prisma/prisma.service";
@@ -54,22 +54,25 @@ describe("ReportService", () => {
   describe("getReportById test", () => {
     it("it should return the id report ", async () => {
       prismaService.report.findUniqueOrThrow = jest.fn().mockReturnValue(serviceGetReportById_returnedValue);
+      prismaService.report.findUniqueOrThrow().catch = jest.fn().mockReturnValue(serviceGetReportById_returnedValue);
 
-      expect(await service.getReportById(prismaServiceFindUniqueOrThrow_Filter.where.id)).toEqual(
-        serviceGetReportById_returnedValue,
-      );
+      expect(await service.getReportById(serviceGetReportById_returnedValue.id)).toEqual(serviceGetReportById_returnedValue);
     });
 
     it("it should throw HttpException when no report was found ", async () => {
-      jest.spyOn(prismaService.report, "findFirstOrThrow").mockReturnValue(undefined);
+      prismaService.report.findUniqueOrThrow = jest.fn().mockReturnValue(serviceGetReportById_returnedValue);
+      prismaService.report.findUniqueOrThrow().catch = jest.fn().mockImplementation(() => {
+        throw new HttpException("", HttpStatus.NOT_FOUND);
+      });
 
       await expect(service.getReportById("9f7118ae-9c00-4dc1-8b76-7cc28f09ab96")).rejects.toThrowError(HttpException);
     });
 
     it("prismaService should be called bu the right params ", async () => {
       const prismaFindUniqueOrThrowMock = jest
-        .spyOn(prismaService.report, "findFirstOrThrow")
-        .mockImplementation(jest.fn().mockReturnValue(serviceGetReportById_returnedValue));
+        .spyOn(prismaService.report, "findUniqueOrThrow")
+        .mockImplementation(jest.fn().mockReturnValue([]));
+      prismaService.report.findUniqueOrThrow().catch = jest.fn().mockReturnValue(serviceGetReportById_returnedValue);
 
       await service.getReportById(prismaServiceFindUniqueOrThrow_Filter.where.id);
 
