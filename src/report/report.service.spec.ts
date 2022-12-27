@@ -32,6 +32,22 @@ describe("ReportService", () => {
 
       expect(await service.getAllReport(ReportType.expense)).toEqual(service_getAllReport_expenseFilter_returnedValue);
     });
+
+    it("prismaService.findMany should be called by right params, case expense filter ", async () => {
+      const mockPrismaFindMany = jest.spyOn(prismaService.report, "findMany").mockImplementation(jest.fn().mockReturnValue([]));
+
+      await service.getAllReport(ReportType.expense);
+
+      await expect(mockPrismaFindMany).toBeCalledWith(prismaServiceFindMany_expenseFilter);
+    });
+
+    it("prismaService.findMany should be called by right params, case income filter ", async () => {
+      const mockPrismaFindMany = jest.spyOn(prismaService.report, "findMany").mockImplementation(jest.fn().mockReturnValue([]));
+
+      await service.getAllReport(ReportType.income);
+
+      await expect(mockPrismaFindMany).toBeCalledWith(prismaServiceFindMany_incomeFilter);
+    });
   });
 });
 
@@ -136,6 +152,6 @@ const prismaServiceFindMany_incomeFilter = {
 
 const prismaServiceFindMany_expenseFilter = {
   where: {
-    reportType: ReportType.income,
+    reportType: ReportType.expense,
   },
 };
