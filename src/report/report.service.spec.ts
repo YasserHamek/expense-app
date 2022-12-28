@@ -39,7 +39,7 @@ describe("ReportService", () => {
 
       await service.getAllReport(ReportType.expense);
 
-      await expect(mockPrismaFindMany).toBeCalledWith(prismaServiceFindMany_expenseFilter);
+      expect(mockPrismaFindMany).toBeCalledWith(prismaServiceFindMany_expenseFilter);
     });
 
     it("prismaService.findMany should be called by right params, case income filter : ", async () => {
@@ -47,7 +47,7 @@ describe("ReportService", () => {
 
       await service.getAllReport(ReportType.income);
 
-      await expect(mockPrismaFindMany).toBeCalledWith(prismaServiceFindMany_incomeFilter);
+      expect(mockPrismaFindMany).toBeCalledWith(prismaServiceFindMany_incomeFilter);
     });
   });
 
@@ -76,16 +76,16 @@ describe("ReportService", () => {
 
       await service.getReportById(prismaServiceFindUniqueOrThrow_Filter.where.id);
 
-      await expect(prismaFindUniqueOrThrowMock).toBeCalledWith(prismaServiceFindUniqueOrThrow_Filter);
+      expect(prismaFindUniqueOrThrowMock).toBeCalledWith(prismaServiceFindUniqueOrThrow_Filter);
     });
   });
 
   describe("createReport test", () => {
     it("it should return the created report : ", async () => {
-      prismaService.report.create = jest.fn().mockReturnValue(prismaService_create_returnValue);
+      prismaService.report.create = jest.fn().mockReturnValue(prismaService_create_returnedValue);
 
       expect(await service.createReport(ReportType.expense, { source: "fruit", amount: 100 })).toEqual(
-        prismaService_create_returnValue,
+        prismaService_create_returnedValue,
       );
     });
 
@@ -100,6 +100,51 @@ describe("ReportService", () => {
           amount: 100,
           reportType: ReportType.expense,
         },
+      });
+    });
+  });
+
+  describe("updateReport test : ", () => {
+    it("it should return the updated report : ", async () => {
+      prismaService.report.update = jest.fn().mockReturnValue(prismaService_updateAnddelete_returnedValue);
+      prismaService.report.update(undefined).catch = jest.fn().mockReturnValue(prismaService_updateAnddelete_returnedValue);
+
+      expect(
+        await service.updateReportById(prismaService_updateAnddelete_returnedValue.id, { source: "travelling", amount: 300 }),
+      ).toEqual(prismaService_updateAnddelete_returnedValue);
+    });
+
+    it("it should call prismaService with the right params : ", async () => {
+      const prismaUpdateMock = jest.spyOn(prismaService.report, "update").mockImplementation(jest.fn().mockReturnValue([]));
+      prismaService.report.update(undefined).catch = jest.fn().mockReturnValue(prismaService_updateAnddelete_returnedValue);
+
+      await service.updateReportById(prismaService_updateAnddelete_returnedValue.id, { source: "travelling", amount: 300 });
+
+      expect(prismaUpdateMock).toBeCalledWith({
+        data: { source: "travelling", amount: 300 },
+        where: { id: prismaService_updateAnddelete_returnedValue.id },
+      });
+    });
+  });
+
+  describe("deleteReport test : ", () => {
+    it("it should return the deleted report : ", async () => {
+      prismaService.report.delete = jest.fn().mockReturnValue(prismaService_updateAnddelete_returnedValue);
+      prismaService.report.delete(undefined).catch = jest.fn().mockReturnValue(prismaService_updateAnddelete_returnedValue);
+
+      expect(await service.deleteReportById(prismaService_updateAnddelete_returnedValue.id)).toEqual(
+        prismaService_updateAnddelete_returnedValue,
+      );
+    });
+
+    it("it should call prismaService with the right params : ", async () => {
+      const prismaDeleteMock = jest.spyOn(prismaService.report, "delete").mockImplementation(jest.fn().mockReturnValue([]));
+      prismaService.report.delete(undefined).catch = jest.fn().mockReturnValue(prismaService_updateAnddelete_returnedValue);
+
+      await service.deleteReportById(prismaService_updateAnddelete_returnedValue.id);
+
+      expect(prismaDeleteMock).toBeCalledWith({
+        where: { id: prismaService_updateAnddelete_returnedValue.id },
       });
     });
   });
@@ -229,11 +274,21 @@ const serviceGetReportById_returnedValue = {
 };
 
 //createReport testing data
-const prismaService_create_returnValue = {
+const prismaService_create_returnedValue = {
   id: "c1b7324a-b712-4a97-a15e-2db4e5ca6f36",
   source: "fruit",
   amount: 100,
   createdAt: "2022-12-28T17:38:07.468Z",
   updatedAt: "2022-12-28T17:38:07.468Z",
+  reportType: "expense",
+};
+
+//update and delete report testing data
+const prismaService_updateAnddelete_returnedValue = {
+  id: "d06afdc4-1d28-4068-9427-b86039fff6ad",
+  source: "traveling",
+  amount: 300,
+  createdAt: "2022-12-26T18:55:29.731Z",
+  updatedAt: "2022-12-28T18:07:51.465Z",
   reportType: "expense",
 };
