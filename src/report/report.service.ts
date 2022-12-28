@@ -43,8 +43,7 @@ export class ReportService {
         reportType: type,
       },
     });
-    const report = new ResponseReportDto(createdReport);
-    return report;
+    return new ResponseReportDto(createdReport);
   }
 
   async updateReportById(id: string, updateReportDto: UpdateReportDto): Promise<ResponseReportDto> {
@@ -61,7 +60,6 @@ export class ReportService {
         }
         throw new HttpException("internal server error", HttpStatus.INTERNAL_SERVER_ERROR);
       });
-    const returnedReport = new ResponseReportDto(updatedReport);
     return new ResponseReportDto(updatedReport);
   }
 
