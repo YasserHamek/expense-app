@@ -43,8 +43,8 @@ export class ReportService {
         reportType: type,
       },
     });
-
-    return new ResponseReportDto(createdReport);
+    const report = new ResponseReportDto(createdReport);
+    return report;
   }
 
   async updateReportById(id: string, updateReportDto: UpdateReportDto): Promise<ResponseReportDto> {

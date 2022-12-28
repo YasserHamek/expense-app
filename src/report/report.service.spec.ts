@@ -22,19 +22,19 @@ describe("ReportService", () => {
   });
 
   describe("getAllReport unit testing", () => {
-    it("should return expected income value", async () => {
+    it("should return expected income value : ", async () => {
       prismaService.report.findMany = jest.fn().mockReturnValue(prismaFindMany_incomeFilter_returnedValue);
 
       expect(await service.getAllReport(ReportType.income)).toEqual(service_getAllReport_incomeFilter_returnedValue);
     });
 
-    it("should return expected expense value", async () => {
+    it("should return expected expense value : ", async () => {
       prismaService.report.findMany = jest.fn().mockReturnValue(prismaFindMany_expenseFilter_returnedValue);
 
       expect(await service.getAllReport(ReportType.expense)).toEqual(service_getAllReport_expenseFilter_returnedValue);
     });
 
-    it("prismaService.findMany should be called by right params, case expense filter ", async () => {
+    it("prismaService.findMany should be called by right params, case expense filter : ", async () => {
       const mockPrismaFindMany = jest.spyOn(prismaService.report, "findMany").mockImplementation(jest.fn().mockReturnValue([]));
 
       await service.getAllReport(ReportType.expense);
@@ -42,7 +42,7 @@ describe("ReportService", () => {
       await expect(mockPrismaFindMany).toBeCalledWith(prismaServiceFindMany_expenseFilter);
     });
 
-    it("prismaService.findMany should be called by right params, case income filter ", async () => {
+    it("prismaService.findMany should be called by right params, case income filter : ", async () => {
       const mockPrismaFindMany = jest.spyOn(prismaService.report, "findMany").mockImplementation(jest.fn().mockReturnValue([]));
 
       await service.getAllReport(ReportType.income);
@@ -52,14 +52,14 @@ describe("ReportService", () => {
   });
 
   describe("getReportById test", () => {
-    it("it should return the id report ", async () => {
+    it("it should return the id report : ", async () => {
       prismaService.report.findUniqueOrThrow = jest.fn().mockReturnValue(serviceGetReportById_returnedValue);
       prismaService.report.findUniqueOrThrow().catch = jest.fn().mockReturnValue(serviceGetReportById_returnedValue);
 
       expect(await service.getReportById(serviceGetReportById_returnedValue.id)).toEqual(serviceGetReportById_returnedValue);
     });
 
-    it("it should throw HttpException when no report was found ", async () => {
+    it("it should throw HttpException when no report was found : ", async () => {
       prismaService.report.findUniqueOrThrow = jest.fn().mockReturnValue(serviceGetReportById_returnedValue);
       prismaService.report.findUniqueOrThrow().catch = jest.fn().mockImplementation(() => {
         throw new HttpException("", HttpStatus.NOT_FOUND);
@@ -68,7 +68,7 @@ describe("ReportService", () => {
       await expect(service.getReportById("9f7118ae-9c00-4dc1-8b76-7cc28f09ab96")).rejects.toThrowError(HttpException);
     });
 
-    it("prismaService should be called bu the right params ", async () => {
+    it("prismaService should be called bu the right params : ", async () => {
       const prismaFindUniqueOrThrowMock = jest
         .spyOn(prismaService.report, "findUniqueOrThrow")
         .mockImplementation(jest.fn().mockReturnValue([]));
@@ -77,6 +77,30 @@ describe("ReportService", () => {
       await service.getReportById(prismaServiceFindUniqueOrThrow_Filter.where.id);
 
       await expect(prismaFindUniqueOrThrowMock).toBeCalledWith(prismaServiceFindUniqueOrThrow_Filter);
+    });
+  });
+
+  describe("createReport test", () => {
+    it("it should return the created report : ", async () => {
+      prismaService.report.create = jest.fn().mockReturnValue(prismaService_create_returnValue);
+
+      expect(await service.createReport(ReportType.expense, { source: "fruit", amount: 100 })).toEqual(
+        prismaService_create_returnValue,
+      );
+    });
+
+    it("it should call prismaService with the right params : ", async () => {
+      const mockPrismaCreate = jest.spyOn(prismaService.report, "create").mockReturnValue(undefined);
+
+      await service.createReport(ReportType.expense, { source: "fruit", amount: 100 });
+
+      expect(mockPrismaCreate).toBeCalledWith({
+        data: {
+          source: "fruit",
+          amount: 100,
+          reportType: ReportType.expense,
+        },
+      });
     });
   });
 });
@@ -202,4 +226,14 @@ const serviceGetReportById_returnedValue = {
   createdAt: "2022-12-26T18:55:29.731Z",
   updatedAt: "2022-12-26T18:53:50.903Z",
   reportType: "income",
+};
+
+//createReport testing data
+const prismaService_create_returnValue = {
+  id: "c1b7324a-b712-4a97-a15e-2db4e5ca6f36",
+  source: "fruit",
+  amount: 100,
+  createdAt: "2022-12-28T17:38:07.468Z",
+  updatedAt: "2022-12-28T17:38:07.468Z",
+  reportType: "expense",
 };
