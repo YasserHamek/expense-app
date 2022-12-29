@@ -7,8 +7,6 @@ import { SummuryService } from "./summury.service";
 describe("SummuryController", () => {
   let controller: SummuryController;
   let summuryService: SummuryService;
-  let prismaService: PrismaService;
-  let reportService: ReportService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -18,11 +16,25 @@ describe("SummuryController", () => {
 
     controller = module.get<SummuryController>(SummuryController);
     summuryService = module.get<SummuryService>(SummuryService);
-    prismaService = module.get<PrismaService>(PrismaService);
-    reportService = module.get<ReportService>(ReportService);
   });
 
   it("should be defined", () => {
     expect(controller).toBeDefined();
+  });
+
+  describe("getAllSummry test", () => {
+    it("it should return summury of all income and expense : ", async () => {
+      summuryService.getSummury = jest.fn().mockReturnValue({
+        totalExpense: 800,
+        totalIncome: 3000,
+        netincome: 2200,
+      });
+
+      expect(await controller.getSummury()).toEqual({
+        totalExpense: 800,
+        totalIncome: 3000,
+        netincome: 2200,
+      });
+    });
   });
 });

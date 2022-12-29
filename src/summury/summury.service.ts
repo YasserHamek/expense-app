@@ -15,10 +15,10 @@ export class SummuryService {
     const totalExpense = allExpenseReport.reduce((sum, report) => sum + report.amount, 0);
     const totalIncome = allIncomeReport.reduce((sum, report) => sum + report.amount, 0);
 
-    return {
+    return new SummuryDto({
       totalExpense,
       totalIncome,
       netincome: totalIncome - totalExpense,
-    };
+    });
   }
 }

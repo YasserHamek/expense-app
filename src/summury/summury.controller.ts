@@ -1,8 +1,8 @@
-import { Controller, Get } from '@nestjs/common';
-import { SummuryDto } from './summury.dtos';
-import { SummuryService } from './summury.service';
+import { Controller, Get } from "@nestjs/common";
+import { SummuryDto } from "./summury.dtos";
+import { SummuryService } from "./summury.service";
 
-@Controller('summury')
+@Controller("summury")
 export class SummuryController {
   constructor(private readonly summuryService: SummuryService) {}
 
