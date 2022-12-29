@@ -65,6 +65,42 @@ describe("ReportController", () => {
       );
     });
   });
+
+  describe("createReport test", () => {
+    it("should return expected id report : ", async () => {
+      reportService.createReport = jest.fn().mockReturnValue(reportService_createReport_returnedValue);
+
+      expect(
+        await reportController.createReport(ReportType.expense, {
+          source: "vegetables",
+          amount: 100,
+        }),
+      ).toEqual(reportService_createReport_returnedValue);
+    });
+  });
+
+  describe("updateReport test", () => {
+    it("should return expected id report : ", async () => {
+      reportService.updateReportById = jest.fn().mockReturnValue(reportService_createReport_returnedValue);
+
+      expect(
+        await reportController.updateReportById(reportService_createReport_returnedValue.id, {
+          source: "vegetables",
+          amount: 100,
+        }),
+      ).toEqual(reportService_createReport_returnedValue);
+    });
+  });
+
+  describe("deleteReport test", () => {
+    it("should return expected id report : ", async () => {
+      reportService.deleteReportById = jest.fn().mockReturnValue(reportService_createReport_returnedValue);
+
+      expect(await reportController.deleteReportById(reportService_createReport_returnedValue.id)).toEqual(
+        reportService_createReport_returnedValue,
+      );
+    });
+  });
 });
 
 //getAllReport testing data
@@ -108,3 +144,12 @@ const reportService_getAllReport_incomeReturnedValue = [
     updatedAtTransformed: "2022-12-26T18:55:29.731Z",
   },
 ];
+
+//create update delete Report test data
+const reportService_createReport_returnedValue = {
+  id: "c5ce1ceb-14e8-4b59-9ad1-54b5225c4c24",
+  source: "vegetables",
+  amount: 100,
+  reportType: "expense",
+  updatedAtTransformed: "2022-12-29T09:25:21.927Z",
+};
