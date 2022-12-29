@@ -36,7 +36,7 @@ export class ResponseReportDto {
 
   @Expose({ name: "updatedAtTransformed" })
   transformCreatedAt() {
-    return this.createdAt;
+    return this.updatedAt;
   }
 
   reportType: ReportType;

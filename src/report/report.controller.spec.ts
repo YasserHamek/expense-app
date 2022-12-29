@@ -55,6 +55,16 @@ describe("ReportController", () => {
       expect(mockReportServiceGetAllReport).toBeCalledWith(ReportType.income);
     });
   });
+
+  describe("getReportById test", () => {
+    it("should return expected id report : ", async () => {
+      reportService.getReportById = jest.fn().mockReturnValue(reportService_getAllReport_expenseReturnedValue[0]);
+
+      expect(await reportController.getReportById(reportService_getAllReport_expenseReturnedValue[0].id)).toEqual(
+        reportService_getAllReport_expenseReturnedValue[0],
+      );
+    });
+  });
 });
 
 //getAllReport testing data
