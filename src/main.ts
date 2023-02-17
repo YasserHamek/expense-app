@@ -1,6 +1,7 @@
 import { ValidationPipe } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module";
+import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -9,6 +10,19 @@ async function bootstrap() {
       whitelist: true,
     }),
   );
+
+  //Swagger Configuration
+  const config = new DocumentBuilder()
+    .setTitle(" Expense Rest Api")
+    .setDescription(" Expense Rest Api Description ")
+    .setVersion("1.0")
+    .addTag("expense")
+    .build();
+
+  const document = SwaggerModule.createDocument(app, config);
+
+  SwaggerModule.setup("api", app, document);
+
   await app.listen(3000);
 }
 bootstrap();
