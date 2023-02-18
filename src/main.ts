@@ -16,7 +16,6 @@ async function bootstrap() {
     .setTitle(" Expense Rest Api")
     .setDescription(" Expense Rest Api Description ")
     .setVersion("1.0")
-    .addTag("expense")
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
